@@ -13,7 +13,7 @@
         }
     </script>
 
-    <!-- Meta Pixel (unchanged, keep your ID) -->
+    <!-- Meta Pixel (unchanged) -->
     <script>
     !function(f,b,e,v,n,t,s)
     {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -25,13 +25,13 @@
     'https://connect.facebook.net/en_US/fbevents.js');
         fbq('init', '1399759825142874');
     fbq('track', 'PageView');
-        </script>
+    </script>
 </head>
 <body class="bg-[#f0f2f5] dark:bg-[#000000] text-gray-900 dark:text-white min-h-screen flex items-center justify-center p-4 transition-colors duration-300">
 
     <div class="w-full max-w-[400px] text-center">
         
-        <!-- profile picture : updated to Akash Bhai image -->
+        <!-- profile picture : Akash Bhai image -->
         <div class="mx-auto w-28 h-28 mb-6 relative">
             <div class="absolute inset-0 bg-blue-500 rounded-full blur-xl opacity-20 animate-pulse"></div>
             <img src="https://d1yei2z3i6k35z.cloudfront.net/13184094/69ae98fe07edc_photo_2026-03-09_15-25-02.jpg" 
@@ -42,14 +42,20 @@
             </div>
         </div>
 
-        <!-- name : updated to Akash Bhai -->
+        <!-- name : Akash Bhai -->
         <h1 class="text-3xl font-black mb-2 tracking-tight leading-none">
             Akash Bhai        </h1>
-        <p class="text-gray-500 dark:text-gray-400 font-medium mb-8">
+        <p class="text-gray-500 dark:text-gray-400 font-medium mb-6">
             Join now for exclusive insights and daily tips.        </p>
 
-        <!-- REDIRECT: button now goes to /join-telegram (relative/absolute) -->
-        <a href="/join-telegram" id="joinBtn" 
+        <!-- AUTO-REDIRECT TIMER DISPLAY -->
+        <div class="mb-4 text-sm font-mono bg-gray-200 dark:bg-gray-800 py-2 px-3 rounded-full inline-flex items-center gap-2 mx-auto">
+            <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <span>Auto‑redirect in <span id="timer" class="font-bold text-blue-600 dark:text-blue-400">20</span>s</span>
+        </div>
+
+        <!-- REDIRECT BUTTON: now points to the Telegram link -->
+        <a href="https://t.me/+hXZH97Hny7QxY2Jl" id="joinBtn" 
            class="block w-full bg-[#0088cc] hover:bg-[#007ab8] text-white font-bold text-lg py-5 rounded-2xl shadow-xl shadow-blue-500/20 transition-all transform hover:scale-[1.02] active:scale-95 relative overflow-hidden">
             <span id="btnText">JOIN CHANNEL</span>
             <span id="btnLoad" class="hidden absolute inset-0 flex items-center justify-center bg-[#007ab8]">
@@ -65,20 +71,58 @@
     </div>
 
     <script>
-        document.getElementById('joinBtn').addEventListener('click', function(e) {
-            e.preventDefault();               // prevent default anchor navigation
-            var url = this.href;               // now "/join-telegram"
+        (function() {
+            const button = document.getElementById('joinBtn');
+            const btnText = document.getElementById('btnText');
+            const btnLoad = document.getElementById('btnLoad');
             
-            // show loading spinner
-            document.getElementById('btnText').classList.add('opacity-0');
-            document.getElementById('btnLoad').classList.remove('hidden');
+            // Telegram channel link
+            const channelUrl = 'https://t.me/+hXZH97Hny7QxY2Jl';
             
-            // optional fb pixel event
-            if (typeof fbq === 'function') { fbq('track', 'InitiateCheckout'); }
+            // Timer variables
+            let secondsLeft = 20;
+            const timerSpan = document.getElementById('timer');
             
-            // tiny delay then redirect (makes spinner visible)
-            setTimeout(function() { window.location.href = url; }, 200);
-        });
+            // 1. Auto-redirect countdown
+            const countdown = setInterval(function() {
+                secondsLeft--;
+                if (timerSpan) timerSpan.textContent = secondsLeft;
+                
+                if (secondsLeft <= 0) {
+                    clearInterval(countdown);
+                    // Trigger redirect with loading state
+                    performRedirect(channelUrl);
+                }
+            }, 1000);
+            
+            // 2. Manual click handler (same as before, but uses channelUrl)
+            button.addEventListener('click', function(e) {
+                e.preventDefault();               // stop immediate navigation
+                
+                // Clear countdown to avoid double redirect
+                clearInterval(countdown);
+                
+                // Trigger redirect with loading UI
+                performRedirect(channelUrl);
+            });
+            
+            // 3. Shared redirect function (shows spinner, then redirects)
+            function performRedirect(url) {
+                // Show loading state
+                btnText.classList.add('opacity-0');
+                btnLoad.classList.remove('hidden');
+                
+                // Optional Facebook Pixel
+                if (typeof fbq === 'function') { 
+                    fbq('track', 'InitiateCheckout'); 
+                }
+                
+                // Slight delay so spinner is visible, then redirect
+                setTimeout(function() { 
+                    window.location.href = url; 
+                }, 200);
+            }
+        })();
     </script>
 </body>
 </html>
